@@ -28,3 +28,6 @@ vendor
 
 # GoLand
 .idea
+
+# OS
+.DS_Store
