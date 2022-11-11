@@ -1,11 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"github.com/cloudfoundry-community/go-cfclient"
-	"net/url"
 	"os"
+
+	"github.com/cloudfoundry-community/go-cfclient/v3/client"
 )
 
 func main() {
@@ -19,22 +18,16 @@ func main() {
 }
 
 func execute() error {
-	config, err := cfclient.NewConfigFromCF()
+	c, err := client.NewConfigFromCFHome()
 	if err != nil {
 		return err
 	}
-	client, err := cfclient.NewClient(config)
-	if err != nil {
-		return err
-	}
-
-	vars, err := client.ListV3SecGroupsByQuery(url.Values{})
-	bytes, err := json.Marshal(vars)
+	c.SkipSSLValidation(true)
+	cf, err := client.New(c)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(string(bytes))
-
-	return nil
+	_, err = cf.Applications.Start("6a62ec20-738e-498b-bcde-89bba7ea8c96")
+	return err
 }
